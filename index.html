@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Attender</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="auth" hidden>
+      <section class="pitch">
+        <div class="logo"><s></s><span class="bn"></span></div>
+        <div>
+          <h1>Know where you stand, class by class.</h1>
+          <p style="margin-top: 16px">
+            Track every lecture, see exactly how many you can miss, and plan the rest of the
+            semester.
+          </p>
+        </div>
+        <p class="meta">Accounts and data are stored on this device.</p>
+      </section>
+      <section class="form">
+        <form id="af" novalidate>
+          <h2 id="at">Welcome back</h2>
+          <div class="tabs" role="tablist">
+            <button type="button" role="tab" id="tin" aria-selected="true">Sign in</button
+            ><button type="button" role="tab" id="tup" aria-selected="false">Create account</button>
+          </div>
+          <label id="nl" hidden>Full name<input id="nm" autocomplete="name" /></label>
+          <label>Email<input id="em" type="email" autocomplete="email" /></label>
+          <label
+            >Password<input
+              id="pw"
+              type="password"
+              autocomplete="current-password"
+              placeholder="At least 8 characters"
+          /></label>
+          <label class="chk" style="font-weight: 400"
+            ><input id="spw" type="checkbox" /> Show password</label
+          >
+          <p id="err" role="alert"></p>
+          <button class="btn" id="go">Sign in</button>
+        </form>
+      </section>
+    </div>
+
+    <div class="app" id="app" hidden>
+      <aside class="side">
+        <div class="logo"><s></s><span class="bn"></span></div>
+        <button class="nav" data-v="home" aria-current="true">
+          <svg
+            class="ic"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M4 6h16M4 12h16M4 18h10" /></svg
+          ><span>Subjects</span>
+        </button>
+        <button class="nav" data-v="tt">
+          <svg
+            class="ic"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 2" /></svg
+          ><span>Timetable</span>
+        </button>
+        <button class="nav" data-v="cal">
+          <svg
+            class="ic"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="3" y="5" width="18" height="16" rx="2" />
+            <path d="M3 10h18M8 3v4M16 3v4" /></svg
+          ><span>Calendar</span>
+        </button>
+        <button class="nav" data-v="ins">
+          <svg
+            class="ic"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M5 20v-9M12 20V4M19 20v-6" /></svg
+          ><span>Insights</span>
+        </button>
+        <button class="nav" data-v="calc">
+          <svg
+            class="ic"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="5" y="3" width="14" height="18" rx="2" />
+            <path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01" /></svg
+          ><span>Calculator</span>
+        </button>
+        <button class="nav" data-v="set">
+          <svg
+            class="ic"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" /></svg
+          ><span>Settings</span>
+        </button>
+        <div class="me">
+          <b id="uname"></b><button class="q" id="out" style="padding-left: 0">Sign out</button>
+        </div>
+      </aside>
+      <main>
+        <div class="head">
+          <h1 id="vt">Subjects</h1>
+          <div class="clock" id="clock" aria-label="Current time"></div>
+          <div id="dl" class="datenav">
+            <button class="q" id="dprev" aria-label="Previous day">‹</button
+            ><label>Marking for · <b id="dnote">Today</b><input id="date" type="date" /></label
+            ><button class="q" id="dnext" aria-label="Next day">›</button
+            ><button class="q" id="dtoday">Today</button>
+          </div>
+        </div>
+
+        <div id="v-home">
+          <div class="stats">
+            <div class="stat big"><b id="sAll">–</b><span id="sMsg">Overall attendance</span></div>
+            <div class="stat"><b id="sAtt">0</b><span>Classes attended</span></div>
+            <div class="stat"><b id="sRisk">0</b><span>Subjects at risk</span></div>
+            <div class="stat"><b id="sStr">0</b><span>Attended in a row</span></div>
+          </div>
+          <section class="panel" id="alertp" hidden>
+            <h3>Needs attention</h3>
+            <div id="alertl"></div>
+          </section>
+          <section class="panel" id="trendp" hidden>
+            <h3>
+              Weekly attendance
+              <span class="meta" style="font-weight: 400"
+                >(weeks starting Monday, dashed line is your minimum)</span
+              >
+            </h3>
+            <div id="trend"></div>
+          </section>
+          <div class="nowbar" id="nowbar" hidden></div>
+          <section class="panel" id="todayp" hidden>
+            <h3 id="todayh"></h3>
+            <div id="todaylist"></div>
+            <div class="row" style="margin-top: 10px">
+              <button class="q" id="allp">Mark all present</button>
+            </div>
+          </section>
+          <div
+            class="row"
+            style="justify-content: space-between; align-items: center; margin-bottom: 10px"
+          >
+            <h3 style="margin: 0">Your subjects</h3>
+            <label style="flex: none; min-width: 0; display: flex; align-items: center; gap: 8px"
+              >Sort<select id="sort">
+                <option value="added">Order added</option>
+                <option value="low">Lowest attendance first</option>
+              </select></label
+            >
+          </div>
+          <div id="list"></div>
+          <section class="panel">
+            <h3>Add a subject</h3>
+            <div class="row">
+              <label style="flex: 2; min-width: 150px"
+                >Name<input id="n" placeholder="Mathematics"
+              /></label>
+              <label
+                >Attended so far<input id="a" type="number" inputmode="numeric" min="0" value="0"
+              /></label>
+              <label
+                >Held so far<input id="t" type="number" inputmode="numeric" min="0" value="0"
+              /></label>
+            </div>
+            <div class="row" id="dchips" style="margin-top: 10px"></div>
+            <div class="row" style="margin-top: 10px">
+              <button class="btn" id="add">Add subject</button>
+            </div>
+          </section>
+        </div>
+
+        <div id="v-tt" hidden>
+          <section class="panel">
+            <h3>Add a class slot</h3>
+            <div class="row">
+              <label style="flex: 2; min-width: 150px">Subject<select id="tsub"></select></label>
+              <label
+                >Day<select id="tday">
+                  <option value="1">Monday</option>
+                  <option value="2">Tuesday</option>
+                  <option value="3">Wednesday</option>
+                  <option value="4">Thursday</option>
+                  <option value="5">Friday</option>
+                  <option value="6">Saturday</option>
+                  <option value="0">Sunday</option>
+                </select></label
+              >
+              <label>Start<input id="tst" type="time" value="09:00" /></label>
+              <label>End<input id="ten" type="time" value="10:00" /></label>
+            </div>
+            <div class="row" style="margin-top: 10px">
+              <button class="btn" id="tadd">Add slot</button>
+            </div>
+          </section>
+          <section class="panel">
+            <h3>Weekly timetable</h3>
+            <div id="ttgrid"></div>
+          </section>
+          <section class="panel">
+            <h3>Timetable analysis</h3>
+            <div class="row" style="margin-bottom: 12px">
+              <label style="max-width: 180px"
+                >Weeks ahead<input
+                  id="tweeks"
+                  type="number"
+                  inputmode="numeric"
+                  min="1"
+                  max="30"
+                  value="4"
+              /></label>
+            </div>
+            <div id="ttan"></div>
+          </section>
+        </div>
+
+        <div id="v-cal" hidden>
+          <section class="panel">
+            <div class="row" style="justify-content: space-between; align-items: center">
+              <button class="q" id="pm">‹ Prev</button>
+              <h3 id="mt" style="margin: 0"></h3>
+              <button class="q" id="nx">Next ›</button>
+            </div>
+            <div class="cal" id="grid"></div>
+            <div id="dayinfo" class="meta" style="margin-top: 12px">
+              Tap a day to see what was marked.
+            </div>
+          </section>
+        </div>
+
+        <div id="v-ins" hidden>
+          <section class="panel">
+            <h3>Subject balance</h3>
+            <p class="meta" style="margin: -6px 0 8px">
+              Each corner is a subject. The further out the point, the higher your attendance. The
+              dashed shape is your minimum.
+            </p>
+            <div id="radar"></div>
+          </section>
+          <section class="panel">
+            <h3>Subjects compared</h3>
+            <div id="sbars"></div>
+          </section>
+          <section class="panel">
+            <h3>Attendance by weekday</h3>
+            <div id="wd"></div>
+          </section>
+          <section class="panel">
+            <h3>Month by month</h3>
+            <div id="mo"></div>
+          </section>
+          <section class="panel">
+            <h3>How classes were marked</h3>
+            <div id="mix"></div>
+          </section>
+        </div>
+
+        <div id="v-calc" hidden>
+          <section class="panel">
+            <h3>Attendance calculator</h3>
+            <div class="row">
+              <label
+                >Attended<input
+                  id="ca"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  value="30" /></label
+              ><label
+                >Held<input id="ct" type="number" inputmode="numeric" min="0" value="40" /></label
+              ><label
+                >Target %<input
+                  id="cg"
+                  type="number"
+                  inputmode="numeric"
+                  min="1"
+                  max="99"
+                  value="80" /></label
+              ><label
+                >Classes left (optional)<input
+                  id="cr"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  value="0"
+              /></label>
+            </div>
+            <p class="msg" id="cres" style="margin: 12px 0 0"></p>
+            <p class="plan" id="cplan" style="margin: 8px 0 0" hidden></p>
+          </section>
+        </div>
+
+        <div id="v-set" hidden>
+          <section class="panel">
+            <h3>Rules</h3>
+            <label
+              >Minimum attendance %<input
+                id="min"
+                type="number"
+                inputmode="numeric"
+                min="1"
+                max="99"
+            /></label>
+            <p class="meta">
+              Green is 5 points above this or more, amber is at or just above it, red is below.
+              Percentages round down.
+            </p>
+            <label class="chk" style="margin-top: 12px"
+              ><input id="od" type="checkbox" /> Count on-duty as present</label
+            >
+          </section>
+          <section class="panel">
+            <h3>Theme</h3>
+            <label
+              >Theme<select id="theme">
+                <option value="auto">Match my device</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select></label
+            >
+          </section>
+          <section class="panel">
+            <h3>Backup</h3>
+            <div class="row">
+              <button class="q" id="bcsv">Show CSV</button
+              ><button class="q" id="bjson">Show backup</button
+              ><button class="q" id="brest">Restore from text</button>
+            </div>
+            <textarea
+              id="io"
+              aria-label="Backup text"
+              placeholder="Export text appears here. To restore, paste a backup and choose Restore from text."
+            ></textarea>
+          </section>
+          <section class="panel">
+            <h3>Account</h3>
+            <div class="row">
+              <button class="q" id="out2">Sign out</button
+              ><button class="q" id="demo">Add demo subjects</button
+              ><button class="q" id="reset">Clear all my data</button
+              ><button class="q" id="delacc" style="color: var(--r)">Delete account</button>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+    <script src="app.js"></script>
+  </body>
+</html>

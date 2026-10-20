@@ -1,0 +1,3143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Attender</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+/* Attender - style.css
+   1. Tokens (light + dark)  2. Base  3. Sign-in  4. App shell
+   5. Cards and charts       6. Calendar, forms, toast  7. Responsive */
+
+/* ---------- 1. Tokens ---------- */
+:root {
+  --bg: #e6e8ec;
+  --card: #f5f6f8;
+  --ink: #16181d;
+  --mute: #5b6472;
+  --line: #d3d7de;
+  --pri: #d9481c;
+  --priT: #ffffff;
+  --gold: #d9481c;
+  --g: #16794c;
+  --y: #946400;
+  --r: #b42318;
+  --o: #1d5fa8;
+  --onfill: #ffffff;
+  --sh: rgba(20, 30, 50, 0.1);
+  --side: #12151b;
+  --font:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1116;
+    --card: #171b22;
+    --ink: #e8eaee;
+    --mute: #9aa3b0;
+    --line: #262c36;
+    --pri: #f26b3a;
+    --priT: #1a0f0a;
+    --gold: #ff9a6e;
+    --g: #4cc38a;
+    --y: #e8c547;
+    --r: #f0786b;
+    --o: #7fb0f0;
+    --onfill: #121418;
+    --sh: rgba(0, 0, 0, 0.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1116;
+  --card: #171b22;
+  --ink: #e8eaee;
+  --mute: #9aa3b0;
+  --line: #262c36;
+  --pri: #f26b3a;
+  --priT: #1a0f0a;
+  --gold: #ff9a6e;
+  --g: #4cc38a;
+  --y: #e8c547;
+  --r: #f0786b;
+  --o: #7fb0f0;
+  --onfill: #121418;
+  --sh: rgba(0, 0, 0, 0.4);
+  color-scheme: dark;
+}
+
+/* ---------- 2. Base ---------- */
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--bg);
+  z-index: 30;
+}
+[hidden] {
+  display: none !important;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 8px;
+  padding: 9px 14px;
+  min-height: 44px;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+button:hover {
+  border-color: var(--mute);
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+input,
+select {
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 8px;
+  padding: 9px 11px;
+  min-height: 44px;
+  width: 100%;
+}
+select {
+  width: auto;
+}
+label {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mute);
+  flex: 1;
+  min-width: 90px;
+}
+label.chk,
+label.day {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--ink);
+  font-weight: 400;
+}
+label.chk input {
+  width: 22px;
+  height: 22px;
+  min-height: 22px;
+}
+label.day {
+  flex: none;
+  min-width: 0;
+  font-size: 14px;
+}
+label.day input {
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+}
+.row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: end;
+}
+.btn {
+  background: var(--pri);
+  border-color: var(--pri);
+  color: var(--priT);
+  font-weight: 600;
+}
+.btn:hover {
+  border-color: var(--pri);
+  opacity: 0.9;
+}
+.q {
+  color: var(--mute);
+  font-size: 13px;
+  padding: 6px 10px;
+  min-height: 36px;
+}
+h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.meta {
+  color: var(--mute);
+  font-size: 14px;
+}
+.g {
+  color: var(--g);
+}
+.y {
+  color: var(--y);
+}
+.r {
+  color: var(--r);
+}
+
+/* ---------- 3. Sign-in ---------- */
+#auth {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.pitch {
+  background: var(--card);
+  border-right: 1px solid var(--line);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+}
+.pitch h1 {
+  font-size: 36px;
+  line-height: 1.15;
+  margin: 0;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  max-width: 14ch;
+}
+.pitch p {
+  margin: 0;
+  max-width: 38ch;
+  color: var(--mute);
+}
+.logo {
+  font-weight: 700;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+}
+.logo s {
+  display: none;
+}
+.form {
+  display: grid;
+  place-content: center;
+  padding: 32px;
+}
+.form form {
+  width: min(380px, 100%);
+  display: grid;
+  gap: 14px;
+}
+.form h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 650;
+}
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+}
+.tabs button {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  color: var(--mute);
+  font-weight: 600;
+  flex: 1;
+}
+.tabs button[aria-selected="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+#err {
+  color: var(--r);
+  font-size: 14px;
+  min-height: 20px;
+  margin: 0;
+}
+
+/* ---------- 4. App shell ---------- */
+.app {
+  display: grid;
+  grid-template-columns: 232px 1fr;
+  min-height: 100vh;
+}
+.side {
+  background: var(--card);
+  border-right: 1px solid var(--line);
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.side .logo {
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: none;
+  color: var(--mute);
+  text-align: left;
+  font-weight: 500;
+  width: 100%;
+  border-radius: 8px;
+}
+.nav:hover {
+  background: var(--bg);
+}
+.nav[aria-current="true"] {
+  background: var(--bg);
+  color: var(--ink);
+  font-weight: 600;
+}
+.ic {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+.me {
+  margin-top: auto;
+  padding: 12px 10px 0;
+  font-size: 14px;
+  border-top: 1px solid var(--line);
+}
+.me b {
+  display: block;
+  overflow-wrap: anywhere;
+}
+main {
+  padding: 28px 32px 48px;
+  max-width: 880px;
+  width: 100%;
+}
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.head h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.datenav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.datenav label {
+  gap: 2px;
+  flex: none;
+  min-width: 0;
+}
+.datenav .q {
+  border: 1px solid var(--line);
+  min-height: 44px;
+  min-width: 40px;
+  font-size: 15px;
+}
+
+/* ---------- 5. Cards and charts ---------- */
+.stats {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.panel,
+.card,
+.stat {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+}
+.panel,
+.card {
+  margin-bottom: 12px;
+}
+.stat b {
+  display: block;
+  font-size: 26px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.stat.big b {
+  font-size: 34px;
+}
+.stat span {
+  font-size: 13px;
+  color: var(--mute);
+}
+.card {
+  display: grid;
+  gap: 10px;
+}
+.sh {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+.sh h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.pc {
+  font-size: 24px;
+  font-weight: 650;
+  text-align: right;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.chip {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 2px;
+  letter-spacing: 0;
+}
+.chip::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.bar {
+  height: 6px;
+  background: var(--line);
+  border-radius: 3px;
+  position: relative;
+}
+.bar i {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--line);
+  transition: width 0.4s ease;
+}
+.bar i.g {
+  background: var(--g);
+}
+.bar i.y {
+  background: var(--y);
+}
+.bar i.r {
+  background: var(--r);
+}
+.bar u {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--ink);
+  opacity: 0.4;
+}
+.msg {
+  font-size: 14px;
+  font-weight: 500;
+}
+.plan {
+  font-size: 13px;
+  color: var(--mute);
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.mk button,
+.trow button,
+.dots button {
+  color: var(--onfill);
+  font-weight: 600;
+  border: 0;
+}
+.mk button {
+  flex: 1;
+}
+.mk .p,
+.dots .p,
+.trow .p {
+  background: var(--g);
+}
+.mk .a,
+.dots .a,
+.trow .a {
+  background: var(--r);
+}
+.mk .o,
+.dots .o,
+.trow .o {
+  background: var(--o);
+}
+.mk .c,
+.dots .c,
+.trow .c {
+  background: var(--mute);
+}
+.dots {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.dots button {
+  width: 26px;
+  height: 26px;
+  min-height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 11px;
+}
+.trow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid var(--line);
+}
+.trow:first-of-type {
+  border-top: 0;
+}
+.trow span {
+  flex: 1;
+  font-weight: 500;
+}
+.trow button {
+  width: 44px;
+  padding: 0;
+}
+details {
+  border-top: 1px solid var(--line);
+  padding-top: 6px;
+}
+summary {
+  cursor: pointer;
+  color: var(--mute);
+  font-size: 13px;
+  font-weight: 500;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+}
+details[open] summary {
+  margin-bottom: 10px;
+}
+.empty {
+  text-align: center;
+  color: var(--mute);
+  padding: 28px 8px;
+}
+.steps {
+  text-align: left;
+  max-width: 36ch;
+  margin: 0 auto 16px;
+  padding-left: 20px;
+  color: var(--ink);
+}
+
+/* ---------- 6. Calendar, forms, toast ---------- */
+.cal {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-top: 12px;
+}
+.cal .ch {
+  text-align: center;
+  font-size: 12px;
+  color: var(--mute);
+}
+.cal button {
+  min-height: 46px;
+  padding: 2px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  font-size: 14px;
+  border-color: transparent;
+}
+.cal button[aria-pressed="true"] {
+  border-color: var(--ink);
+}
+.cal button.now {
+  font-weight: 700;
+  color: var(--gold);
+}
+.cal i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: block;
+  margin-top: 2px;
+}
+.cal i.p {
+  background: var(--g);
+}
+.cal i.a {
+  background: var(--r);
+}
+textarea {
+  width: 100%;
+  min-height: 100px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 10px;
+  font:
+    13px ui-monospace,
+    Menlo,
+    Consolas,
+    monospace;
+  margin-top: 10px;
+}
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 40;
+}
+.toast.on {
+  opacity: 1;
+  pointer-events: auto;
+}
+.toast button {
+  min-height: 30px;
+  padding: 2px 12px;
+  background: transparent;
+  color: inherit;
+  border-color: currentColor;
+  font-weight: 600;
+}
+
+/* ---------- 7. Responsive ---------- */
+@media (max-width: 859px) {
+  #auth {
+    grid-template-columns: 1fr;
+  }
+  .pitch {
+    padding: 28px 24px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .pitch h1 {
+    font-size: 28px;
+  }
+  .pitch p {
+    display: none;
+  }
+  .app {
+    display: block;
+  }
+  .side {
+    position: fixed;
+    inset: auto 0 0 0;
+    height: auto;
+    flex-direction: row;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+    z-index: 20;
+    border-right: 0;
+    border-top: 1px solid var(--line);
+  }
+  .side .logo,
+  .me {
+    display: none;
+  }
+  .nav {
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    font-size: 11.5px;
+    padding: 6px 2px;
+    text-align: center;
+    flex: 1;
+  }
+  main {
+    padding: 16px 16px 96px;
+  }
+  .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .stat.big {
+    grid-column: 1 / -1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* ---------- 8. Visual polish ---------- */
+:root {
+  --display: "Sora", var(--font);
+  --side: #12151b;
+}
+h1,
+h2,
+.stat b,
+.pc,
+.logo,
+.form h2 {
+  font-family: var(--display);
+}
+h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 650;
+}
+h3::before {
+  content: "";
+  width: 4px;
+  height: 15px;
+  border-radius: 2px;
+  background: var(--pri);
+}
+.panel,
+.card,
+.stat {
+  border-radius: 16px;
+  box-shadow: 0 6px 20px var(--sh);
+}
+input,
+select {
+  background: var(--bg);
+}
+input:focus,
+select:focus {
+  border-color: var(--pri);
+}
+.head h1 {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+/* sidebar */
+.side {
+  background: var(--side);
+  border-right: 0;
+  color: #fff;
+}
+.side .logo {
+  color: #fff;
+  font-size: 20px;
+}
+.logo s {
+  display: block;
+  position: relative;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--pri);
+  margin-right: 10px;
+}
+.logo s::after {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 4px;
+  width: 6px;
+  height: 12px;
+  border: solid var(--priT);
+  border-width: 0 3px 3px 0;
+  transform: rotate(40deg);
+}
+.nav {
+  color: #a4adbb;
+}
+.nav:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+.nav[aria-current="true"] {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  box-shadow: inset 3px 0 0 var(--pri);
+}
+.nav[aria-current="true"] .ic {
+  color: var(--pri);
+}
+.me {
+  border-top-color: rgba(255, 255, 255, 0.12);
+  color: #d5dae3;
+}
+.me .q {
+  color: #a4adbb;
+}
+
+/* sign-in */
+.pitch {
+  background: var(--pri);
+  color: var(--priT);
+  border: 0;
+  position: relative;
+  overflow: hidden;
+}
+.pitch::after {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  border: 56px solid rgba(0, 0, 0, 0.09);
+  right: -140px;
+  bottom: -140px;
+}
+.pitch > * {
+  position: relative;
+  z-index: 1;
+}
+.pitch h1 {
+  font-size: 46px;
+  font-weight: 700;
+  max-width: 12ch;
+}
+.pitch p {
+  color: inherit;
+  opacity: 0.85;
+}
+.pitch .logo s {
+  background: var(--priT);
+}
+.pitch .logo s::after {
+  border-color: var(--pri);
+}
+
+/* overview stats */
+.stat.big {
+  background: var(--pri);
+  border-color: var(--pri);
+  color: var(--priT);
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  column-gap: 14px;
+  align-items: center;
+}
+.stat.big::before {
+  content: "";
+  grid-row: 1 / 3;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: conic-gradient(var(--priT) calc(var(--pct, 0) * 1%), rgba(0, 0, 0, 0.2) 0);
+  -webkit-mask: radial-gradient(circle, transparent 21px, #000 22px);
+  mask: radial-gradient(circle, transparent 21px, #000 22px);
+}
+.stat.big b {
+  font-size: 38px;
+  font-weight: 700;
+}
+.stat.big span {
+  color: inherit;
+  opacity: 0.85;
+}
+.stat:nth-child(2) {
+  background: color-mix(in srgb, var(--g) 12%, var(--card));
+  border-color: color-mix(in srgb, var(--g) 32%, var(--line));
+}
+.stat:nth-child(3) {
+  background: color-mix(in srgb, var(--r) 12%, var(--card));
+  border-color: color-mix(in srgb, var(--r) 32%, var(--line));
+}
+.stat:nth-child(4) {
+  background: color-mix(in srgb, var(--o) 12%, var(--card));
+  border-color: color-mix(in srgb, var(--o) 32%, var(--line));
+}
+.stat:nth-child(2) b {
+  color: var(--g);
+}
+.stat:nth-child(3) b {
+  color: var(--r);
+}
+.stat:nth-child(4) b {
+  color: var(--o);
+}
+
+/* subject cards */
+.card {
+  gap: 12px;
+}
+.card:hover {
+  border-color: color-mix(in srgb, var(--ink) 25%, var(--line));
+}
+.sh h2 {
+  font-size: 19px;
+  font-weight: 650;
+}
+.pc {
+  font-size: 28px;
+  font-weight: 700;
+}
+.chip {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 15%, transparent);
+}
+.bar {
+  height: 10px;
+  border-radius: 999px;
+}
+.bar i {
+  border-radius: 999px;
+}
+.mk button {
+  border: 1px solid transparent;
+  font-weight: 650;
+}
+.mk .p {
+  background: color-mix(in srgb, var(--g) 16%, transparent);
+  color: var(--g);
+  border-color: color-mix(in srgb, var(--g) 35%, transparent);
+}
+.mk .a {
+  background: color-mix(in srgb, var(--r) 16%, transparent);
+  color: var(--r);
+  border-color: color-mix(in srgb, var(--r) 35%, transparent);
+}
+.mk .o {
+  background: color-mix(in srgb, var(--o) 16%, transparent);
+  color: var(--o);
+  border-color: color-mix(in srgb, var(--o) 35%, transparent);
+}
+.mk .c {
+  background: color-mix(in srgb, var(--mute) 16%, transparent);
+  color: var(--mute);
+  border-color: color-mix(in srgb, var(--mute) 35%, transparent);
+}
+.mk .p:hover {
+  background: var(--g);
+  color: var(--onfill);
+}
+.mk .a:hover {
+  background: var(--r);
+  color: var(--onfill);
+}
+.mk .o:hover {
+  background: var(--o);
+  color: var(--onfill);
+}
+.mk .c:hover {
+  background: var(--mute);
+  color: var(--onfill);
+}
+.cal button:hover {
+  background: var(--bg);
+}
+@media (max-width: 859px) {
+  .pitch h1 {
+    font-size: 32px;
+  }
+  .pitch::after {
+    width: 260px;
+    height: 260px;
+    border-width: 36px;
+    right: -90px;
+    bottom: -110px;
+  }
+}
+
+/* ---------- 9. Clock, timetable ---------- */
+.clock {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mute);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 14px;
+  white-space: nowrap;
+}
+.nowbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: color-mix(in srgb, var(--pri) 14%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--pri) 40%, var(--line));
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+.nowbar .grow {
+  flex: 1;
+  min-width: 180px;
+}
+.trow .tm {
+  flex: none;
+  width: 100px;
+  color: var(--mute);
+  font-size: 13px;
+}
+.trow .nm {
+  flex: 1;
+  font-weight: 500;
+}
+.trow.now {
+  background: color-mix(in srgb, var(--pri) 10%, transparent);
+  border-radius: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+.tag {
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 999px;
+  margin-left: 6px;
+  background: color-mix(in srgb, var(--pri) 20%, transparent);
+  color: var(--pri);
+}
+.tag.warn {
+  background: color-mix(in srgb, var(--y) 20%, transparent);
+  color: var(--y);
+}
+.ttday {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--mute);
+  margin: 14px 0 4px;
+}
+.ttrow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+  border-top: 1px solid var(--line);
+}
+.ttrow .tm {
+  width: 110px;
+  color: var(--mute);
+  font-size: 13px;
+}
+.ttrow .nm {
+  flex: 1;
+  font-weight: 500;
+}
+.scroll {
+  overflow-x: auto;
+}
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.tbl th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--mute);
+  font-size: 12px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.tbl td {
+  padding: 8px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+  font-weight: 600;
+}
+.tbl small {
+  display: block;
+  color: var(--mute);
+  font-size: 12px;
+  font-weight: 400;
+  max-width: 34ch;
+}
+.facts {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+}
+.facts li {
+  padding-left: 16px;
+  position: relative;
+}
+.facts li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pri);
+}
+@media (max-width: 859px) {
+  .nav {
+    font-size: 10px;
+  }
+  .trow .tm {
+    width: 84px;
+  }
+  .clock {
+    font-size: 13px;
+    padding: 4px 10px;
+  }
+}
+</style>
+  </head>
+  <body>
+    <div id="auth" hidden>
+      <section class="pitch">
+        <div class="logo"><s></s><span class="bn"></span></div>
+        <div>
+          <h1>Know where you stand, class by class.</h1>
+          <p style="margin-top: 16px">
+            Track every lecture, see exactly how many you can miss, and plan the rest of the
+            semester.
+          </p>
+        </div>
+        <p class="meta">Accounts and data are stored on this device.</p>
+      </section>
+      <section class="form">
+        <form id="af" novalidate>
+          <h2 id="at">Welcome back</h2>
+          <div class="tabs" role="tablist">
+            <button type="button" role="tab" id="tin" aria-selected="true">Sign in</button
+            ><button type="button" role="tab" id="tup" aria-selected="false">Create account</button>
+          </div>
+          <label id="nl" hidden>Full name<input id="nm" autocomplete="name" /></label>
+          <label>Email<input id="em" type="email" autocomplete="email" /></label>
+          <label
+            >Password<input
+              id="pw"
+              type="password"
+              autocomplete="current-password"
+              placeholder="At least 8 characters"
+          /></label>
+          <label class="chk" style="font-weight: 400"
+            ><input id="spw" type="checkbox" /> Show password</label
+          >
+          <p id="err" role="alert"></p>
+          <button class="btn" id="go">Sign in</button>
+        </form>
+      </section>
+    </div>
+
+    <div class="app" id="app" hidden>
+      <aside class="side">
+        <div class="logo"><s></s><span class="bn"></span></div>
+        <button class="nav" data-v="home" aria-current="true">
+          <svg
+            class="ic"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M4 6h16M4 12h16M4 18h10" /></svg
+          ><span>Subjects</span>
+        </button>
+        <button class="nav" data-v="tt">
+          <svg
+            class="ic"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 2" /></svg
+          ><span>Timetable</span>
+        </button>
+        <button class="nav" data-v="cal">
+          <svg
+            class="ic"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="3" y="5" width="18" height="16" rx="2" />
+            <path d="M3 10h18M8 3v4M16 3v4" /></svg
+          ><span>Calendar</span>
+        </button>
+        <button class="nav" data-v="ins">
+          <svg
+            class="ic"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M5 20v-9M12 20V4M19 20v-6" /></svg
+          ><span>Insights</span>
+        </button>
+        <button class="nav" data-v="calc">
+          <svg
+            class="ic"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="5" y="3" width="14" height="18" rx="2" />
+            <path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01" /></svg
+          ><span>Calculator</span>
+        </button>
+        <button class="nav" data-v="set">
+          <svg
+            class="ic"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" /></svg
+          ><span>Settings</span>
+        </button>
+        <div class="me">
+          <b id="uname"></b><button class="q" id="out" style="padding-left: 0">Sign out</button>
+        </div>
+      </aside>
+      <main>
+        <div class="head">
+          <h1 id="vt">Subjects</h1>
+          <div class="clock" id="clock" aria-label="Current time"></div>
+          <div id="dl" class="datenav">
+            <button class="q" id="dprev" aria-label="Previous day">‹</button
+            ><label>Marking for · <b id="dnote">Today</b><input id="date" type="date" /></label
+            ><button class="q" id="dnext" aria-label="Next day">›</button
+            ><button class="q" id="dtoday">Today</button>
+          </div>
+        </div>
+
+        <div id="v-home">
+          <div class="stats">
+            <div class="stat big"><b id="sAll">–</b><span id="sMsg">Overall attendance</span></div>
+            <div class="stat"><b id="sAtt">0</b><span>Classes attended</span></div>
+            <div class="stat"><b id="sRisk">0</b><span>Subjects at risk</span></div>
+            <div class="stat"><b id="sStr">0</b><span>Attended in a row</span></div>
+          </div>
+          <section class="panel" id="alertp" hidden>
+            <h3>Needs attention</h3>
+            <div id="alertl"></div>
+          </section>
+          <section class="panel" id="trendp" hidden>
+            <h3>
+              Weekly attendance
+              <span class="meta" style="font-weight: 400"
+                >(weeks starting Monday, dashed line is your minimum)</span
+              >
+            </h3>
+            <div id="trend"></div>
+          </section>
+          <div class="nowbar" id="nowbar" hidden></div>
+          <section class="panel" id="todayp" hidden>
+            <h3 id="todayh"></h3>
+            <div id="todaylist"></div>
+            <div class="row" style="margin-top: 10px">
+              <button class="q" id="allp">Mark all present</button>
+            </div>
+          </section>
+          <div
+            class="row"
+            style="justify-content: space-between; align-items: center; margin-bottom: 10px"
+          >
+            <h3 style="margin: 0">Your subjects</h3>
+            <label style="flex: none; min-width: 0; display: flex; align-items: center; gap: 8px"
+              >Sort<select id="sort">
+                <option value="added">Order added</option>
+                <option value="low">Lowest attendance first</option>
+              </select></label
+            >
+          </div>
+          <div id="list"></div>
+          <section class="panel">
+            <h3>Add a subject</h3>
+            <div class="row">
+              <label style="flex: 2; min-width: 150px"
+                >Name<input id="n" placeholder="Mathematics"
+              /></label>
+              <label
+                >Attended so far<input id="a" type="number" inputmode="numeric" min="0" value="0"
+              /></label>
+              <label
+                >Held so far<input id="t" type="number" inputmode="numeric" min="0" value="0"
+              /></label>
+            </div>
+            <div class="row" id="dchips" style="margin-top: 10px"></div>
+            <div class="row" style="margin-top: 10px">
+              <button class="btn" id="add">Add subject</button>
+            </div>
+          </section>
+        </div>
+
+        <div id="v-tt" hidden>
+          <section class="panel">
+            <h3>Add a class slot</h3>
+            <div class="row">
+              <label style="flex: 2; min-width: 150px">Subject<select id="tsub"></select></label>
+              <label
+                >Day<select id="tday">
+                  <option value="1">Monday</option>
+                  <option value="2">Tuesday</option>
+                  <option value="3">Wednesday</option>
+                  <option value="4">Thursday</option>
+                  <option value="5">Friday</option>
+                  <option value="6">Saturday</option>
+                  <option value="0">Sunday</option>
+                </select></label
+              >
+              <label>Start<input id="tst" type="time" value="09:00" /></label>
+              <label>End<input id="ten" type="time" value="10:00" /></label>
+            </div>
+            <div class="row" style="margin-top: 10px">
+              <button class="btn" id="tadd">Add slot</button>
+            </div>
+          </section>
+          <section class="panel">
+            <h3>Weekly timetable</h3>
+            <div id="ttgrid"></div>
+          </section>
+          <section class="panel">
+            <h3>Timetable analysis</h3>
+            <div class="row" style="margin-bottom: 12px">
+              <label style="max-width: 180px"
+                >Weeks ahead<input
+                  id="tweeks"
+                  type="number"
+                  inputmode="numeric"
+                  min="1"
+                  max="30"
+                  value="4"
+              /></label>
+            </div>
+            <div id="ttan"></div>
+          </section>
+        </div>
+
+        <div id="v-cal" hidden>
+          <section class="panel">
+            <div class="row" style="justify-content: space-between; align-items: center">
+              <button class="q" id="pm">‹ Prev</button>
+              <h3 id="mt" style="margin: 0"></h3>
+              <button class="q" id="nx">Next ›</button>
+            </div>
+            <div class="cal" id="grid"></div>
+            <div id="dayinfo" class="meta" style="margin-top: 12px">
+              Tap a day to see what was marked.
+            </div>
+          </section>
+        </div>
+
+        <div id="v-ins" hidden>
+          <section class="panel">
+            <h3>Subject balance</h3>
+            <p class="meta" style="margin: -6px 0 8px">
+              Each corner is a subject. The further out the point, the higher your attendance. The
+              dashed shape is your minimum.
+            </p>
+            <div id="radar"></div>
+          </section>
+          <section class="panel">
+            <h3>Subjects compared</h3>
+            <div id="sbars"></div>
+          </section>
+          <section class="panel">
+            <h3>Attendance by weekday</h3>
+            <div id="wd"></div>
+          </section>
+          <section class="panel">
+            <h3>Month by month</h3>
+            <div id="mo"></div>
+          </section>
+          <section class="panel">
+            <h3>How classes were marked</h3>
+            <div id="mix"></div>
+          </section>
+        </div>
+
+        <div id="v-calc" hidden>
+          <section class="panel">
+            <h3>Attendance calculator</h3>
+            <div class="row">
+              <label
+                >Attended<input
+                  id="ca"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  value="30" /></label
+              ><label
+                >Held<input id="ct" type="number" inputmode="numeric" min="0" value="40" /></label
+              ><label
+                >Target %<input
+                  id="cg"
+                  type="number"
+                  inputmode="numeric"
+                  min="1"
+                  max="99"
+                  value="80" /></label
+              ><label
+                >Classes left (optional)<input
+                  id="cr"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  value="0"
+              /></label>
+            </div>
+            <p class="msg" id="cres" style="margin: 12px 0 0"></p>
+            <p class="plan" id="cplan" style="margin: 8px 0 0" hidden></p>
+          </section>
+        </div>
+
+        <div id="v-set" hidden>
+          <section class="panel">
+            <h3>Rules</h3>
+            <label
+              >Minimum attendance %<input
+                id="min"
+                type="number"
+                inputmode="numeric"
+                min="1"
+                max="99"
+            /></label>
+            <p class="meta">
+              Green is 5 points above this or more, amber is at or just above it, red is below.
+              Percentages round down.
+            </p>
+            <label class="chk" style="margin-top: 12px"
+              ><input id="od" type="checkbox" /> Count on-duty as present</label
+            >
+          </section>
+          <section class="panel">
+            <h3>Theme</h3>
+            <label
+              >Theme<select id="theme">
+                <option value="auto">Match my device</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select></label
+            >
+          </section>
+          <section class="panel">
+            <h3>Backup</h3>
+            <div class="row">
+              <button class="q" id="bcsv">Show CSV</button
+              ><button class="q" id="bjson">Show backup</button
+              ><button class="q" id="brest">Restore from text</button>
+            </div>
+            <textarea
+              id="io"
+              aria-label="Backup text"
+              placeholder="Export text appears here. To restore, paste a backup and choose Restore from text."
+            ></textarea>
+          </section>
+          <section class="panel">
+            <h3>Account</h3>
+            <div class="row">
+              <button class="q" id="out2">Sign out</button
+              ><button class="q" id="demo">Add demo subjects</button
+              ><button class="q" id="reset">Clear all my data</button
+              ><button class="q" id="delacc" style="color: var(--r)">Delete account</button>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+    <script>
+/* ==========================================================
+   Attender - app.js  (no frameworks, no build step)
+
+   DATA MODEL (saved per account in localStorage as "rc.data.<email>")
+   S = { min: 75, od: true, sort: "added", subs: [ SUBJECT, ... ] }
+   SUBJECT = { n: name, a: attended before tracking, t: held before tracking,
+               rem: classes left, days: [0-6 weekdays], k: creation order,
+               log: [ { d: "YYYY-MM-DD", s: "p"|"a"|"o"|"c" } ] }
+     p = present, a = absent, o = on duty, c = cancelled (not counted)
+
+   FILE MAP
+   1. Accounts      - register / sign in (PBKDF2 password hashing)
+   2. Maths         - exact integer attendance calculations
+   3. Views         - subjects, today list, calendar, weekly trend
+   4. Insights      - radar, subject bars, weekday, monthly, status mix
+   5. Forms/Settings- add/edit subject, theme, backup, demo, delete account
+   6. Boot          - restore session
+   ========================================================== */
+(function () {
+  var BRAND = "Attender"; // change this to your own product name
+  var $ = function (i) {
+    return document.getElementById(i);
+  };
+  var DN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    LB = { p: "Present", a: "Absent", o: "On duty", c: "Cancelled" };
+  function ls(k, d) {
+    try {
+      var v = localStorage.getItem(k);
+      return v ? JSON.parse(v) : d;
+    } catch (e) {
+      return d;
+    }
+  }
+  function ss(k, v) {
+    try {
+      localStorage.setItem(k, JSON.stringify(v));
+    } catch (e) {}
+  }
+  function pad(n) {
+    return String(n).padStart(2, "0");
+  }
+  function today() {
+    var d = new Date();
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  }
+  var tt;
+  function toast(m, undo) {
+    var t = $("toast");
+    t.textContent = m;
+    if (undo) {
+      var b = document.createElement("button");
+      b.textContent = "Undo";
+      b.onclick = function () {
+        undo();
+        t.classList.remove("on");
+      };
+      t.appendChild(b);
+    }
+    t.classList.add("on");
+    clearTimeout(tt);
+    tt = setTimeout(
+      function () {
+        t.classList.remove("on");
+      },
+      undo ? 4500 : 1800,
+    );
+  }
+  document.title = BRAND;
+  document.querySelectorAll(".bn").forEach(function (e) {
+    e.textContent = BRAND;
+  });
+  /* ---------- accounts (stored on this device) ---------- */
+  var users = ls("rc.users", {}),
+    U = null,
+    S = null,
+    mode = "in";
+  function hash(pw, salt) {
+    var e = new TextEncoder();
+    return crypto.subtle
+      .importKey("raw", e.encode(pw), "PBKDF2", false, ["deriveBits"])
+      .then(function (k) {
+        return crypto.subtle.deriveBits(
+          { name: "PBKDF2", salt: e.encode(salt), iterations: 100000, hash: "SHA-256" },
+          k,
+          256,
+        );
+      })
+      .then(function (b) {
+        return Array.prototype.map
+          .call(new Uint8Array(b), function (x) {
+            return pad(x.toString(16));
+          })
+          .join("");
+      });
+  }
+  function setMode(m) {
+    mode = m;
+    $("tin").setAttribute("aria-selected", m === "in");
+    $("tup").setAttribute("aria-selected", m === "up");
+    $("nl").hidden = m === "in";
+    $("at").textContent = m === "in" ? "Welcome back" : "Create your account";
+    $("go").textContent = m === "in" ? "Sign in" : "Create account";
+    $("pw").autocomplete = m === "in" ? "current-password" : "new-password";
+    $("err").textContent = "";
+  }
+  $("tin").onclick = function () {
+    setMode("in");
+  };
+  $("tup").onclick = function () {
+    setMode("up");
+  };
+  $("af").onsubmit = function (ev) {
+    ev.preventDefault();
+    var em = $("em").value.trim().toLowerCase(),
+      pw = $("pw").value,
+      nm = $("nm").value.trim(),
+      er = $("err");
+    er.textContent = "";
+    if (!/^\S+@\S+\.\S+$/.test(em)) {
+      er.textContent = "Enter a valid email address.";
+      return;
+    }
+    if (mode === "up") {
+      if (!nm) {
+        er.textContent = "Enter your name.";
+        return;
+      }
+      if (pw.length < 8) {
+        er.textContent = "Use a password of at least 8 characters.";
+        return;
+      }
+      if (users[em]) {
+        er.textContent = "That email already has an account. Sign in instead.";
+        return;
+      }
+      var salt = Array.prototype.map
+        .call(crypto.getRandomValues(new Uint8Array(16)), function (x) {
+          return pad(x.toString(16));
+        })
+        .join("");
+      hash(pw, salt)
+        .then(function (h) {
+          users[em] = { name: nm, salt: salt, hash: h };
+          ss("rc.users", users);
+          enter(em);
+        })
+        .catch(function () {
+          er.textContent = "Couldn’t create the account in this browser.";
+        });
+    } else {
+      if (!users[em]) {
+        er.textContent = "No account found for that email. Create one first.";
+        return;
+      }
+      hash(pw, users[em].salt)
+        .then(function (h) {
+          if (h === users[em].hash) enter(em);
+          else er.textContent = "Incorrect password.";
+        })
+        .catch(function () {
+          er.textContent = "Couldn’t sign in in this browser.";
+        });
+    }
+  };
+  function enter(em) {
+    U = em;
+    ss("rc.session", em);
+    S = ls("rc.data." + em, null);
+    if (!S || !Array.isArray(S.subs)) S = { min: 75, od: true, subs: [] };
+    $("pw").value = "";
+    $("auth").hidden = true;
+    $("app").hidden = false;
+    $("uname").textContent = users[em].name;
+    $("min").value = S.min;
+    $("od").checked = S.od;
+    $("sort").value = S.sort || "added";
+    $("date").value = today();
+    dayNote();
+    go("home");
+    render();
+  }
+  function leave() {
+    U = null;
+    S = null;
+    ss("rc.session", null);
+    $("app").hidden = true;
+    $("auth").hidden = false;
+    setMode("in");
+  }
+  $("out").onclick = $("out2").onclick = leave;
+  function save() {
+    if (U) ss("rc.data." + U, S);
+  }
+  /* ---------- maths (integers, so exact) ---------- */
+  function stats(s) {
+    var a = s.a,
+      t = s.t,
+      od = 0;
+    s.log.forEach(function (x) {
+      if (x.s === "c") return;
+      t++;
+      if (x.s === "p") a++;
+      else if (x.s === "o") {
+        od++;
+        if (S.od) a++;
+      }
+    });
+    return { a: a, t: t, od: od };
+  }
+  function pct(a, t) {
+    return t ? Math.floor((a * 1000) / t) / 10 : 0;
+  }
+  function col(a, t) {
+    if (!t) return "";
+    var p = a * 100;
+    return p >= (S.min + 5) * t ? "g" : p >= S.min * t ? "y" : "r";
+  }
+  function cd(n, d) {
+    return Math.floor((n + d - 1) / d);
+  }
+  function advice(a, t, T) {
+    if (T >= 100 || T < 1) return "";
+    if (!t) return "Mark a class to see advice.";
+    if (a * 100 >= T * t) {
+      var m = Math.floor((100 * a - T * t) / T);
+      return m > 0
+        ? "You can miss " +
+            m +
+            " more " +
+            (m === 1 ? "class" : "classes") +
+            " and stay at or above " +
+            T +
+            "%."
+        : "No spare classes. Missing the next one drops you below " + T + "%.";
+    }
+    var x = cd(T * t - 100 * a, 100 - T);
+    return (
+      "Attend the next " +
+      x +
+      " " +
+      (x === 1 ? "class" : "classes") +
+      " in a row to reach " +
+      T +
+      "%."
+    );
+  }
+  function plan(a, t, R, T) {
+    if (!R || R < 1) return "";
+    var need = Math.max(0, cd(T * (t + R) - 100 * a, 100));
+    if (need > R)
+      return (
+        "Even attending all " +
+        R +
+        " remaining classes ends at " +
+        pct(a + R, t + R) +
+        "%, short of " +
+        T +
+        "%."
+      );
+    return (
+      "Of the " +
+      R +
+      " classes left, attend at least " +
+      need +
+      " to finish at " +
+      T +
+      "% or more. You can skip " +
+      (R - need) +
+      "."
+    );
+  }
+  /* ---------- views ---------- */
+  var TT = {
+    home: "Subjects",
+    cal: "Calendar",
+    tt: "Timetable",
+    ins: "Insights",
+    calc: "Calculator",
+    set: "Settings",
+  };
+  function go(v) {
+    document.querySelectorAll(".nav").forEach(function (b) {
+      if (b.dataset.v === v) b.setAttribute("aria-current", "true");
+      else b.removeAttribute("aria-current");
+    });
+    ["home", "tt", "cal", "ins", "calc", "set"].forEach(function (x) {
+      $("v-" + x).hidden = x !== v;
+    });
+    $("vt").textContent = TT[v];
+    $("dl").hidden = v !== "home";
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll(".nav").forEach(function (b) {
+    b.onclick = function () {
+      go(b.dataset.v);
+    };
+  });
+  var CH = { g: "Safe", y: "Borderline", r: "At risk", "": "No data" };
+  function render() {
+    S.subs.forEach(function (s) {
+      if (!s.id) s.id = uid();
+    });
+    if (!Array.isArray(S.tt)) S.tt = [];
+    S.subs.forEach(function (s, i) {
+      if (s.k == null) s.k = i;
+    });
+    if (editing < 0) {
+      var sk =
+        S.sort === "low"
+          ? function (x) {
+              var q = stats(x);
+              return q.t ? q.a / q.t : 2;
+            }
+          : function (x) {
+              return x.k;
+            };
+      S.subs.sort(function (x, y) {
+        return sk(x) - sk(y);
+      });
+    }
+    var L = $("list");
+    L.innerHTML = "";
+    var A = 0,
+      H = 0,
+      risk = 0;
+    if (!S.subs.length) {
+      var em = document.createElement("div");
+      em.className = "panel empty";
+      em.innerHTML =
+        '<h3>Welcome. Let’s set up your first subject.</h3><ol class="steps"><li>Add a subject below, with its class days.</li><li>Tap Present, Absent or On duty after each class.</li><li>Watch the advice and charts update.</li></ol><button class="btn" id="tryDemo">Try it with demo data</button>';
+      L.appendChild(em);
+      em.querySelector("#tryDemo").onclick = function () {
+        $("demo").click();
+      };
+    }
+    S.subs.forEach(function (s, i) {
+      var st = stats(s);
+      A += st.a;
+      H += st.t;
+      var c = col(st.a, st.t),
+        p = pct(st.a, st.t);
+      if (c === "r") risk++;
+      var d = document.createElement("div");
+      d.className = "card " + c;
+      var pl = plan(st.a, st.t, s.rem, S.min);
+      if (editing === i) {
+        d.className = "card";
+        d.innerHTML =
+          '<h3 style="margin:0">Edit subject</h3><div class="row"><label style="flex:2;min-width:150px">Name<input id="en"></label><label>Attended before tracking<input id="ea" type="number" inputmode="numeric" min="0"></label><label>Held before tracking<input id="et" type="number" inputmode="numeric" min="0"></label></div><div class="row" id="edc"></div><div class="row"><button class="btn" id="esv">Save changes</button><button class="q" id="ecn">Cancel</button></div>';
+        d.querySelector("#en").value = s.n;
+        d.querySelector("#ea").value = s.a;
+        d.querySelector("#et").value = s.t;
+        DN.forEach(function (n, w) {
+          var l = document.createElement("label");
+          l.className = "day";
+          l.innerHTML =
+            '<input type="checkbox" value="' +
+            w +
+            '"' +
+            (s.days && s.days.indexOf(w) > -1 ? " checked" : "") +
+            ">" +
+            n;
+          d.querySelector("#edc").appendChild(l);
+        });
+        d.querySelector("#esv").onclick = function () {
+          var n = d.querySelector("#en").value.trim(),
+            a = Math.max(0, parseInt(d.querySelector("#ea").value, 10) || 0),
+            t = Math.max(0, parseInt(d.querySelector("#et").value, 10) || 0);
+          if (!n) {
+            toast("Enter a subject name");
+            return;
+          }
+          if (a > t) t = a;
+          s.n = n;
+          s.a = a;
+          s.t = t;
+          s.days = Array.prototype.map.call(d.querySelectorAll("#edc input:checked"), function (x) {
+            return +x.value;
+          });
+          editing = -1;
+          save();
+          render();
+          toast("Subject updated");
+        };
+        d.querySelector("#ecn").onclick = function () {
+          editing = -1;
+          render();
+        };
+        L.appendChild(d);
+        return;
+      }
+      d.innerHTML =
+        '<div class="sh"><div><h2></h2><div class="meta">' +
+        st.a +
+        " of " +
+        st.t +
+        " attended" +
+        (st.od ? " · " + st.od + " on duty" : "") +
+        '</div></div><div class="pc ' +
+        c +
+        '">' +
+        (st.t ? p.toFixed(1) + "%" : "–") +
+        '<span class="chip">' +
+        CH[c] +
+        "</span></div></div>" +
+        '<div class="bar"><i class="' +
+        c +
+        '" style="width:' +
+        Math.min(p, 100) +
+        '%"></i><u style="left:' +
+        S.min +
+        '%"></u></div>' +
+        '<div class="msg ' +
+        c +
+        '">' +
+        advice(st.a, st.t, S.min) +
+        "</div>" +
+        (pl ? '<div class="plan">' + pl + "</div>" : "") +
+        '<div class="row mk"><button class="p" data-k="p">Present</button><button class="a" data-k="a">Absent</button><button class="o" data-k="o">On duty</button><button class="c" data-k="c">Cancelled</button></div>' +
+        "<details" +
+        (openD[s.k] ? " open" : "") +
+        '><summary>History &amp; options</summary><div class="dots" aria-label="Recent classes, tap one to remove it"></div>' +
+        '<div class="row"><label style="max-width:150px">Classes left<input data-k="r" type="number" inputmode="numeric" min="0" value="' +
+        (s.rem || 0) +
+        '"></label><button class="q" data-k="u">Undo last</button><button class="q" data-k="e">Edit</button><button class="q" data-k="d">Delete</button></div></details>';
+      d.querySelector("h2").textContent = s.n;
+      d.querySelector("details").ontoggle = function () {
+        openD[s.k] = this.open;
+      };
+      var dots = d.querySelector(".dots");
+      s.log.slice(-12).forEach(function (x, j, arr) {
+        var idx = s.log.length - arr.length + j,
+          b = document.createElement("button");
+        b.className = x.s;
+        b.textContent = x.s === "o" ? "D" : x.s.toUpperCase();
+        b.title = x.d + " · tap to remove";
+        b.setAttribute("aria-label", x.d + " " + LB[x.s] + ", remove");
+        b.onclick = function () {
+          s.log.splice(idx, 1);
+          save();
+          render();
+        };
+        dots.appendChild(b);
+      });
+      d.querySelectorAll("button[data-k]").forEach(function (b) {
+        b.onclick = function () {
+          var k = b.dataset.k;
+          if (k === "p" || k === "a" || k === "o" || k === "c") {
+            var en = { d: $("date").value || today(), s: k };
+            s.log.push(en);
+            toast(s.n + ": marked " + LB[k].toLowerCase(), function () {
+              var q = s.log.indexOf(en);
+              if (q > -1) {
+                s.log.splice(q, 1);
+                save();
+                render();
+              }
+            });
+          } else if (k === "u") s.log.pop();
+          else if (k === "e") editing = i;
+          else if (k === "d" && confirm("Delete " + s.n + " and its history?"))
+            ((S.tt = S.tt.filter(function (t) {
+              return t.sub !== s.id;
+            })),
+              S.subs.splice(i, 1));
+          save();
+          render();
+        };
+      });
+      d.querySelector('input[data-k="r"]').onchange = function (e) {
+        s.rem = Math.max(0, parseInt(e.target.value, 10) || 0);
+        save();
+        render();
+      };
+      L.appendChild(d);
+    });
+    var P = pct(A, H),
+      c = col(A, H);
+    var al = S.subs.filter(function (s) {
+      var q = stats(s);
+      return col(q.a, q.t) === "r";
+    });
+    $("alertp").hidden = !al.length;
+    var ab = $("alertl");
+    ab.innerHTML = "";
+    al.forEach(function (s) {
+      var q = stats(s),
+        r = document.createElement("div"),
+        b = document.createElement("b"),
+        sp = document.createElement("span");
+      r.className = "trow";
+      b.textContent = s.n;
+      sp.style.fontWeight = "400";
+      sp.textContent = advice(q.a, q.t, S.min);
+      r.appendChild(b);
+      r.appendChild(sp);
+      ab.appendChild(r);
+    });
+    var fl = [];
+    S.subs.forEach(function (s) {
+      s.log.forEach(function (x) {
+        if (x.s !== "c") fl.push(x);
+      });
+    });
+    fl.sort(function (x, y) {
+      return x.d < y.d ? -1 : x.d > y.d ? 1 : 0;
+    });
+    var run = 0;
+    for (var q = fl.length - 1; q >= 0 && fl[q].s !== "a"; q--) run++;
+    $("sStr").textContent = run;
+    $("sAll").textContent = H ? P.toFixed(1) + "%" : "–";
+    document.querySelector(".stat.big").style.setProperty("--pct", H ? Math.min(P, 100) : 0);
+    $("sAtt").textContent = A;
+    $("sRisk").textContent = risk;
+    $("sMsg").textContent = H
+      ? "Overall attendance · " + (c === "r" ? "below" : "at or above") + " " + S.min + "% minimum"
+      : "Overall attendance";
+    calc();
+    renderToday();
+    renderCal();
+    renderTrend();
+    renderIns();
+    renderNow();
+    renderTT();
+  }
+  function shift(n) {
+    var d = new Date(($("date").value || today()) + "T00:00:00");
+    d.setDate(d.getDate() + n);
+    $("date").value = d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+    renderToday();
+    dayNote();
+  }
+  function dayNote() {
+    var d = new Date(($("date").value || today()) + "T00:00:00"),
+      n = Math.round((d - new Date(today() + "T00:00:00")) / 864e5);
+    $("dnote").textContent =
+      n === 0 ? "Today" : n === -1 ? "Yesterday" : n === 1 ? "Tomorrow" : DN[d.getDay()];
+  }
+
+  /* ---------- Timetable, current time and day-wise marking ---------- */
+  var FULL = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  var ORD = [1, 2, 3, 4, 5, 6, 0];
+  function uid() {
+    return Math.random().toString(36).slice(2, 9);
+  }
+  function mins(t) {
+    var p = t.split(":");
+    return +p[0] * 60 + +p[1];
+  }
+  function nowMin() {
+    var d = new Date();
+    return d.getHours() * 60 + d.getMinutes();
+  }
+  function hm(m) {
+    var h = Math.floor(m / 60),
+      r = m % 60;
+    return h ? h + "h" + (r ? " " + r + "m" : "") : r + "m";
+  }
+  function byStart(a, b) {
+    return a.st < b.st ? -1 : a.st > b.st ? 1 : 0;
+  }
+  function subById(id) {
+    return S.subs.filter(function (s) {
+      return s.id === id;
+    })[0];
+  }
+  function entryFor(s, sl, ds) {
+    return s.log.filter(function (e) {
+      return e.d === ds && e.t === sl.id;
+    })[0];
+  }
+  function dayItems(ds) {
+    var w = new Date(ds + "T00:00:00").getDay(),
+      it = [];
+    S.tt
+      .filter(function (t) {
+        return t.day === w;
+      })
+      .sort(byStart)
+      .forEach(function (t) {
+        var s = subById(t.sub);
+        if (s) it.push({ sb: s, sl: t });
+      });
+    S.subs.forEach(function (s) {
+      if (
+        s.days &&
+        s.days.indexOf(w) > -1 &&
+        !S.tt.some(function (t) {
+          return t.sub === s.id;
+        })
+      )
+        it.push({ sb: s, sl: null });
+    });
+    return it;
+  }
+  function markSlot(s, sl, ds, k) {
+    var ex = entryFor(s, sl, ds),
+      prev = ex ? ex.s : null,
+      en = ex;
+    if (ex) ex.s = k;
+    else {
+      en = { d: ds, s: k, t: sl.id };
+      s.log.push(en);
+    }
+    save();
+    render();
+    toast(s.n + ": " + LB[k], function () {
+      if (prev) en.s = prev;
+      else {
+        var q = s.log.indexOf(en);
+        if (q > -1) s.log.splice(q, 1);
+      }
+      save();
+      render();
+    });
+  }
+  function renderToday() {
+    var ds = $("date").value || today(),
+      w = new Date(ds + "T00:00:00").getDay(),
+      box = $("todaylist");
+    box.innerHTML = "";
+    var it = dayItems(ds),
+      nm = nowMin(),
+      isToday = ds === today();
+    $("todayp").hidden = !it.length;
+    $("todayh").textContent = (isToday ? "Today" : ds) + " · " + FULL[w];
+    it.forEach(function (x) {
+      var s = x.sb,
+        sl = x.sl,
+        r = document.createElement("div");
+      r.className = "trow";
+      var ent = sl ? entryFor(s, sl, ds) : null;
+      var m = sl
+        ? ent
+          ? [LB[ent.s]]
+          : []
+        : s.log
+            .filter(function (e) {
+              return e.d === ds;
+            })
+            .map(function (e) {
+              return LB[e.s];
+            });
+      var tm = document.createElement("span");
+      tm.className = "tm";
+      tm.textContent = sl ? sl.st + "–" + sl.en : "Any time";
+      var n = document.createElement("span");
+      n.className = "nm";
+      n.textContent = s.n + (m.length ? " · " + m.join(", ") : "");
+      if (sl && isToday) {
+        var cur = nm >= mins(sl.st) && nm < mins(sl.en),
+          past = nm >= mins(sl.en);
+        var tag = function (t, c) {
+          var e = document.createElement("em");
+          e.className = "tag " + c;
+          e.textContent = t;
+          n.appendChild(e);
+        };
+        if (cur) {
+          r.classList.add("now");
+          tag("Now", "");
+        } else if (past && !ent) tag("Unmarked", "warn");
+      }
+      r.appendChild(tm);
+      r.appendChild(n);
+      ["p", "a", "o", "c"].forEach(function (k) {
+        var b = document.createElement("button");
+        b.className = k;
+        b.textContent = k === "o" ? "D" : k.toUpperCase();
+        b.setAttribute("aria-label", "Mark " + s.n + " " + LB[k]);
+        b.onclick = function () {
+          if (sl) markSlot(s, sl, ds, k);
+          else {
+            var en = { d: ds, s: k };
+            s.log.push(en);
+            save();
+            render();
+            toast(s.n + ": " + LB[k], function () {
+              var q = s.log.indexOf(en);
+              if (q > -1) {
+                s.log.splice(q, 1);
+                save();
+                render();
+              }
+            });
+          }
+        };
+        r.appendChild(b);
+      });
+      box.appendChild(r);
+    });
+  }
+  function renderNow() {
+    var b = $("nowbar");
+    if (!S) return;
+    var ds = today(),
+      nm = nowMin(),
+      it = dayItems(ds).filter(function (x) {
+        return x.sl;
+      }),
+      cur = null,
+      nxt = null;
+    it.forEach(function (x) {
+      var a = mins(x.sl.st),
+        e = mins(x.sl.en);
+      if (nm >= a && nm < e) cur = x;
+      else if (nm < a && !nxt) nxt = x;
+    });
+    b.innerHTML = "";
+    b.hidden = !it.length;
+    if (!it.length) return;
+    var t = document.createElement("div");
+    t.className = "grow";
+    b.appendChild(t);
+    if (cur) {
+      t.innerHTML =
+        "<b>Now:</b> " +
+        esc(cur.sb.n) +
+        " · ends " +
+        cur.sl.en +
+        " (" +
+        hm(mins(cur.sl.en) - nm) +
+        " left)" +
+        (nxt
+          ? '<br><span class="meta">Next: ' + esc(nxt.sb.n) + " at " + nxt.sl.st + "</span>"
+          : "");
+      if (!entryFor(cur.sb, cur.sl, ds)) {
+        var btn = document.createElement("button");
+        btn.className = "btn";
+        btn.textContent = "Mark present";
+        btn.onclick = function () {
+          markSlot(cur.sb, cur.sl, ds, "p");
+        };
+        b.appendChild(btn);
+      }
+    } else if (nxt)
+      t.innerHTML =
+        "<b>Next:</b> " +
+        esc(nxt.sb.n) +
+        " at " +
+        nxt.sl.st +
+        " (in " +
+        hm(mins(nxt.sl.st) - nm) +
+        ")";
+    else t.innerHTML = "<b>No more classes today.</b>";
+  }
+  function renderTT() {
+    var sel = $("tsub"),
+      keep = sel.value;
+    sel.innerHTML = "";
+    S.subs.forEach(function (s) {
+      var o = document.createElement("option");
+      o.value = s.id;
+      o.textContent = s.n;
+      sel.appendChild(o);
+    });
+    if (keep) sel.value = keep;
+    var g = $("ttgrid"),
+      an = $("ttan");
+    g.innerHTML = "";
+    if (!S.tt.length) {
+      g.innerHTML = '<p class="meta">No slots yet. Add your first class above.</p>';
+      an.innerHTML = '<p class="meta">Add some slots to see the analysis.</p>';
+      return;
+    }
+    ORD.forEach(function (d) {
+      var l = S.tt
+        .filter(function (t) {
+          return t.day === d;
+        })
+        .sort(byStart);
+      if (!l.length) return;
+      var h = document.createElement("div");
+      h.className = "ttday";
+      h.textContent = FULL[d];
+      g.appendChild(h);
+      l.forEach(function (t) {
+        var s = subById(t.sub),
+          r = document.createElement("div");
+        r.className = "ttrow";
+        var a = document.createElement("span");
+        a.className = "tm";
+        a.textContent = t.st + "–" + t.en;
+        var n = document.createElement("span");
+        n.className = "nm";
+        n.textContent = s ? s.n : "(deleted subject)";
+        var x = document.createElement("button");
+        x.className = "q";
+        x.textContent = "Remove";
+        x.onclick = function () {
+          S.tt = S.tt.filter(function (q) {
+            return q.id !== t.id;
+          });
+          save();
+          render();
+        };
+        r.appendChild(a);
+        r.appendChild(n);
+        r.appendChild(x);
+        g.appendChild(r);
+      });
+    });
+    var valid = S.tt.filter(function (t) {
+        return subById(t.sub);
+      }),
+      days = {},
+      mn = 0,
+      per = {};
+    var W = Math.max(1, Math.min(30, parseInt($("tweeks").value, 10) || 4));
+    valid.forEach(function (t) {
+      var d = mins(t.en) - mins(t.st);
+      mn += d;
+      per[t.sub] = (per[t.sub] || 0) + 1;
+      var o = (days[t.day] = days[t.day] || { c: 0, m: 0, l: [] });
+      o.c++;
+      o.m += d;
+      o.l.push(t);
+    });
+    var busy = null;
+    ORD.forEach(function (d) {
+      if (days[d] && (!busy || days[d].m > days[busy].m)) busy = d;
+    });
+    var free = [1, 2, 3, 4, 5]
+      .filter(function (d) {
+        return !days[d];
+      })
+      .map(function (d) {
+        return DN[d];
+      });
+    var gap = null;
+    ORD.forEach(function (d) {
+      if (!days[d]) return;
+      var l = days[d].l.sort(byStart);
+      for (var i = 1; i < l.length; i++) {
+        var gp = mins(l[i].st) - mins(l[i - 1].en);
+        if (gp > 0 && (!gap || gp > gap.m)) gap = { m: gp, d: d, a: l[i - 1].en, b: l[i].st };
+      }
+    });
+    var risk = S.subs.filter(function (s) {
+      var q = stats(s);
+      return per[s.id] && col(q.a, q.t) === "r";
+    });
+    var f =
+      "<li>Weekly load: <b>" + valid.length + " classes</b>, " + hm(mn) + " of lectures.</li>";
+    if (busy !== null)
+      f +=
+        "<li>Busiest day: <b>" +
+        FULL[busy] +
+        "</b> (" +
+        days[busy].c +
+        " classes, " +
+        hm(days[busy].m) +
+        ").</li>";
+    f +=
+      "<li>" +
+      (free.length
+        ? "Free weekdays: <b>" + free.join(", ") + "</b>."
+        : "No free weekday in the week.") +
+      "</li>";
+    if (gap)
+      f +=
+        "<li>Longest break: <b>" +
+        hm(gap.m) +
+        "</b> on " +
+        FULL[gap.d] +
+        ", between " +
+        gap.a +
+        " and " +
+        gap.b +
+        ".</li>";
+    if (risk.length)
+      f +=
+        "<li>Priority: <b>" +
+        risk
+          .map(function (s) {
+            return esc(s.n);
+          })
+          .join(", ") +
+        "</b> below " +
+        S.min +
+        "%. Attend every scheduled class for these.</li>";
+    var rows = "";
+    S.subs
+      .filter(function (s) {
+        return per[s.id];
+      })
+      .forEach(function (s) {
+        var q = stats(s),
+          n = per[s.id] * W,
+          one = pct(q.a + n - W, q.t + n),
+          all = pct(q.a + n, q.t + n);
+        rows +=
+          "<tr><td><b>" +
+          esc(s.n) +
+          "</b><small>" +
+          plan(q.a, q.t, n, S.min) +
+          "</small></td><td>" +
+          per[s.id] +
+          "</td><td>" +
+          (q.t ? pct(q.a, q.t).toFixed(1) + "%" : "–") +
+          '</td><td class="' +
+          col(q.a + n, q.t + n) +
+          '">' +
+          all.toFixed(1) +
+          '%</td><td class="' +
+          col(q.a + n - W, q.t + n) +
+          '">' +
+          one.toFixed(1) +
+          "%</td></tr>";
+      });
+    an.innerHTML =
+      '<ul class="facts">' +
+      f +
+      '</ul><h3 style="margin-top:6px">Forecast for the next ' +
+      W +
+      (W === 1 ? " week" : " weeks") +
+      '</h3><div class="scroll"><table class="tbl"><thead><tr><th>Subject</th><th>Per week</th><th>Now</th><th>Attend all</th><th>Miss 1 a week</th></tr></thead><tbody>' +
+      rows +
+      "</tbody></table></div>" +
+      '<p class="meta" style="margin:8px 0 0">Assumes every scheduled class takes place. The guidance under each subject uses your minimum of ' +
+      S.min +
+      "%.</p>";
+  }
+  function tick() {
+    var d = new Date();
+    $("clock").textContent =
+      d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", second: "2-digit" }) +
+      " · " +
+      DN[d.getDay()] +
+      " " +
+      d.getDate() +
+      " " +
+      d.toLocaleString("en", { month: "short" });
+  }
+  function esc(t) {
+    return String(t).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function agg(kf) {
+    var m = {};
+    S.subs.forEach(function (sb) {
+      sb.log.forEach(function (x) {
+        if (x.s === "c") return;
+        var k = kf(x),
+          o = (m[k] = m[k] || { a: 0, t: 0 });
+        o.t++;
+        if (x.s === "p" || (x.s === "o" && S.od)) o.a++;
+      });
+    });
+    return m;
+  }
+  function bchart(it, label) {
+    var n = it.length,
+      w = Math.floor(332 / n),
+      bw = w - 8,
+      y0 = 86 - S.min * 0.7,
+      h =
+        '<svg viewBox="0 0 340 120" style="width:100%;height:auto" role="img" aria-label="' +
+        label +
+        '"><line x1="0" x2="340" y1="' +
+        y0 +
+        '" y2="' +
+        y0 +
+        '" stroke="var(--mute)" stroke-dasharray="4 4" opacity=".6"/>';
+    it.forEach(function (d, j) {
+      var x = j * w + 4,
+        c = col(d.a, d.t),
+        p = d.t ? Math.floor((d.a * 100) / d.t) : 0,
+        bh = d.t ? Math.max(3, p * 0.7) : 0;
+      h +=
+        (d.t
+          ? '<rect x="' +
+            x +
+            '" y="' +
+            (86 - bh) +
+            '" width="' +
+            bw +
+            '" height="' +
+            bh +
+            '" rx="4" style="fill:var(--' +
+            c +
+            ')"/><text x="' +
+            (x + bw / 2) +
+            '" y="' +
+            (82 - bh) +
+            '" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--ink)">' +
+            p +
+            "%</text>"
+          : "") +
+        '<text x="' +
+        (x + bw / 2) +
+        '" y="104" text-anchor="middle" font-size="11" style="fill:var(--mute)">' +
+        esc(d.l) +
+        "</text>";
+    });
+    return h + "</svg>";
+  }
+  function renderIns() {
+    var rs = S.subs
+        .map(function (s) {
+          var x = stats(s);
+          return { n: s.n, a: x.a, t: x.t, p: pct(x.a, x.t) };
+        })
+        .filter(function (r) {
+          return r.t;
+        }),
+      none = '<p class="meta">Mark some classes to see this chart.</p>';
+    function nm(s) {
+      return s.length > 12 ? s.slice(0, 11) + "…" : s;
+    }
+    if (rs.length < 3)
+      $("radar").innerHTML =
+        '<p class="meta">Add attendance for at least 3 subjects to see the radar chart.</p>';
+    else {
+      var cx = 180,
+        cy = 165,
+        R = 105,
+        n = rs.length;
+      var pt = function (i, p) {
+        var a = -Math.PI / 2 + (i * 2 * Math.PI) / n,
+          r = (R * Math.min(p, 100)) / 100;
+        return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+      };
+      var poly = function (f) {
+        return rs
+          .map(function (r, i) {
+            return pt(i, f(r)).join(",");
+          })
+          .join(" ");
+      };
+      var h =
+        '<svg viewBox="0 0 360 340" style="width:100%;max-width:460px;display:block;margin:auto;height:auto" role="img" aria-label="Radar chart of attendance by subject">';
+      [25, 50, 75, 100].forEach(function (g) {
+        h +=
+          '<polygon points="' +
+          poly(function () {
+            return g;
+          }) +
+          '" fill="none" style="stroke:var(--line)"/>';
+      });
+      rs.forEach(function (r, i) {
+        var e = pt(i, 100);
+        h +=
+          '<line x1="' +
+          cx +
+          '" y1="' +
+          cy +
+          '" x2="' +
+          e[0] +
+          '" y2="' +
+          e[1] +
+          '" style="stroke:var(--line)"/>';
+      });
+      h +=
+        '<polygon points="' +
+        poly(function () {
+          return S.min;
+        }) +
+        '" fill="none" stroke-dasharray="5 4" stroke-width="1.5" style="stroke:var(--mute)"/>';
+      h +=
+        '<polygon points="' +
+        poly(function (r) {
+          return r.p;
+        }) +
+        '" style="fill:var(--pri);fill-opacity:.28;stroke:var(--pri)" stroke-width="2.5" stroke-linejoin="round"/>';
+      rs.forEach(function (r, i) {
+        var q = pt(i, r.p),
+          a = -Math.PI / 2 + (i * 2 * Math.PI) / n,
+          co = Math.cos(a),
+          si = Math.sin(a),
+          lx = cx + (R + 14) * co,
+          ly = cy + (R + 14) * si + (si < -0.5 ? -12 : si > 0.5 ? 6 : -4),
+          an = co > 0.3 ? "start" : co < -0.3 ? "end" : "middle";
+        h +=
+          '<circle cx="' +
+          q[0] +
+          '" cy="' +
+          q[1] +
+          '" r="5" style="fill:var(--' +
+          col(r.a, r.t) +
+          ');stroke:var(--card)" stroke-width="2"/><text x="' +
+          lx +
+          '" y="' +
+          ly +
+          '" text-anchor="' +
+          an +
+          '" font-size="12" style="fill:var(--ink)"><tspan x="' +
+          lx +
+          '">' +
+          esc(nm(r.n)) +
+          '</tspan><tspan x="' +
+          lx +
+          '" dy="14" font-weight="700" style="fill:var(--' +
+          col(r.a, r.t) +
+          ')">' +
+          r.p.toFixed(0) +
+          "%</tspan></text>";
+      });
+      $("radar").innerHTML = h + "</svg>";
+    }
+    if (!rs.length) $("sbars").innerHTML = none;
+    else {
+      var h2 =
+        '<svg viewBox="0 0 340 ' +
+        (rs.length * 38 + 6) +
+        '" style="width:100%;height:auto" role="img" aria-label="Attendance by subject">';
+      rs.forEach(function (r, i) {
+        var y = i * 38,
+          c = col(r.a, r.t);
+        h2 +=
+          '<text x="0" y="' +
+          (y + 12) +
+          '" font-size="13" font-weight="600" style="fill:var(--ink)">' +
+          esc(nm(r.n)) +
+          '</text><text x="340" y="' +
+          (y + 12) +
+          '" text-anchor="end" font-size="13" font-weight="700" style="fill:var(--' +
+          c +
+          ')">' +
+          r.p.toFixed(1) +
+          '%</text><rect x="0" y="' +
+          (y + 19) +
+          '" width="340" height="9" rx="4" style="fill:var(--line)"/><rect x="0" y="' +
+          (y + 19) +
+          '" width="' +
+          Math.min(r.p, 100) * 3.4 +
+          '" height="9" rx="4" style="fill:var(--' +
+          c +
+          ')"/><rect x="' +
+          S.min * 3.4 +
+          '" y="' +
+          (y + 15) +
+          '" width="2" height="17" style="fill:var(--ink);opacity:.55"/>';
+      });
+      $("sbars").innerHTML =
+        h2 +
+        '</svg><p class="meta" style="margin:6px 0 0">The dark tick on each bar is your minimum.</p>';
+    }
+    var wa = agg(function (x) {
+        return new Date(x.d + "T00:00:00").getDay();
+      }),
+      any = Object.keys(wa).length;
+    $("wd").innerHTML = any
+      ? bchart(
+          [1, 2, 3, 4, 5, 6, 0].map(function (d) {
+            var o = wa[d] || { a: 0, t: 0 };
+            return { l: DN[d], a: o.a, t: o.t };
+          }),
+          "Attendance by weekday",
+        ) +
+        '<p class="meta" style="margin:6px 0 0">Low bars show the weekdays you tend to miss.</p>'
+      : none;
+    var ma = agg(function (x) {
+        return x.d.slice(0, 7);
+      }),
+      nw = new Date(),
+      ms = [];
+    for (var i = 5; i >= 0; i--) {
+      var d = new Date(nw.getFullYear(), nw.getMonth() - i, 1),
+        k = d.getFullYear() + "-" + pad(d.getMonth() + 1),
+        o = ma[k] || { a: 0, t: 0 };
+      ms.push({ l: d.toLocaleString("en", { month: "short" }), a: o.a, t: o.t });
+    }
+    $("mo").innerHTML = ms.some(function (m) {
+      return m.t;
+    })
+      ? bchart(ms, "Attendance by month")
+      : none;
+    var cnt = { p: 0, a: 0, o: 0, c: 0 },
+      tot = 0;
+    S.subs.forEach(function (s) {
+      s.log.forEach(function (x) {
+        cnt[x.s]++;
+        tot++;
+      });
+    });
+    if (!tot) $("mix").innerHTML = none;
+    else {
+      var x0 = 0,
+        hm =
+          '<svg viewBox="0 0 340 26" style="width:100%;height:auto" role="img" aria-label="Share of present, absent, on duty and cancelled classes">',
+        lg = '<div class="row" style="margin-top:10px;gap:14px">';
+      ["p", "a", "o", "c"].forEach(function (k) {
+        var w = (cnt[k] / tot) * 340,
+          cc = k === "c" ? "mute" : k === "p" ? "g" : k === "a" ? "r" : "o";
+        if (w)
+          hm +=
+            '<rect x="' +
+            x0 +
+            '" y="0" width="' +
+            w +
+            '" height="26" style="fill:var(--' +
+            cc +
+            ')"/>';
+        x0 += w;
+        lg +=
+          '<span style="font-size:14px"><b style="color:var(--' +
+          cc +
+          ')">●</b> ' +
+          LB[k] +
+          " " +
+          cnt[k] +
+          " (" +
+          Math.round((cnt[k] / tot) * 100) +
+          "%)</span>";
+      });
+      $("mix").innerHTML = hm + "</svg>" + lg + "</div>";
+    }
+  }
+  var editing = -1,
+    openD = {};
+  function renderTrend() {
+    var now = new Date();
+    now.setHours(0, 0, 0, 0);
+    var mon = new Date(now);
+    mon.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+    var wk = [],
+      i;
+    for (i = 7; i >= 0; i--) {
+      var d0 = new Date(mon);
+      d0.setDate(mon.getDate() - 7 * i);
+      wk.push({ s: d0, a: 0, t: 0 });
+    }
+    S.subs.forEach(function (sb) {
+      sb.log.forEach(function (x) {
+        if (x.s === "c") return;
+        var k = Math.floor(Math.round((new Date(x.d + "T00:00:00") - wk[0].s) / 864e5) / 7);
+        if (k < 0 || k > 7) return;
+        wk[k].t++;
+        if (x.s === "p" || (x.s === "o" && S.od)) wk[k].a++;
+      });
+    });
+    var any = wk.some(function (w) {
+      return w.t;
+    });
+    $("trendp").hidden = !any;
+    if (!any) return;
+    var y0 = 86 - S.min * 0.7,
+      h =
+        '<svg viewBox="0 0 340 120" style="width:100%;height:auto" role="img" aria-label="Weekly attendance percentage for the last 8 weeks"><line x1="0" x2="340" y1="' +
+        y0 +
+        '" y2="' +
+        y0 +
+        '" stroke="var(--mute)" stroke-dasharray="4 4" opacity=".6"/>';
+    wk.forEach(function (w, j) {
+      var x = j * 42 + 4,
+        c = col(w.a, w.t),
+        p = w.t ? Math.floor((w.a * 100) / w.t) : 0,
+        bh = w.t ? Math.max(3, p * 0.7) : 0;
+      h +=
+        (w.t
+          ? '<rect x="' +
+            x +
+            '" y="' +
+            (86 - bh) +
+            '" width="34" height="' +
+            bh +
+            '" rx="4" style="fill:var(--' +
+            (c || "mute") +
+            ')"/><text x="' +
+            (x + 17) +
+            '" y="' +
+            (82 - bh) +
+            '" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--ink)">' +
+            p +
+            "%</text>"
+          : "") +
+        '<text x="' +
+        (x + 17) +
+        '" y="104" text-anchor="middle" font-size="10" style="fill:var(--mute)">' +
+        w.s.getDate() +
+        "/" +
+        (w.s.getMonth() + 1) +
+        "</text>";
+    });
+    $("trend").innerHTML = h + "</svg>";
+  }
+  var cm = new Date(),
+    sel = null;
+  cm.setDate(1);
+  function renderCal() {
+    var y = cm.getFullYear(),
+      mo = cm.getMonth(),
+      g = $("grid");
+    g.innerHTML = "";
+    $("mt").textContent = cm.toLocaleString("en", { month: "long", year: "numeric" });
+    var map = {};
+    S.subs.forEach(function (s) {
+      s.log.forEach(function (x) {
+        (map[x.d] = map[x.d] || []).push([s.n, x.s]);
+      });
+    });
+    DN.forEach(function (n) {
+      var h = document.createElement("div");
+      h.className = "ch";
+      h.textContent = n.slice(0, 2);
+      g.appendChild(h);
+    });
+    for (var k = 0; k < new Date(y, mo, 1).getDay(); k++)
+      g.appendChild(document.createElement("div"));
+    for (var d = 1; d <= new Date(y, mo + 1, 0).getDate(); d++)
+      (function (d) {
+        var ds = y + "-" + pad(mo + 1) + "-" + pad(d),
+          e = map[ds] || [],
+          b = document.createElement("button");
+        var st = e.some(function (z) {
+          return z[1] === "a";
+        })
+          ? "a"
+          : e.some(function (z) {
+                return z[1] !== "c";
+              })
+            ? "p"
+            : "";
+        b.innerHTML = "<span>" + d + "</span>" + (st ? '<i class="' + st + '"></i>' : "<i></i>");
+        if (ds === today()) b.className = "now";
+        b.setAttribute("aria-pressed", sel === ds);
+        b.onclick = function () {
+          sel = ds;
+          $("dayinfo").textContent = e.length
+            ? ds +
+              ": " +
+              e
+                .map(function (z) {
+                  return z[0] + " " + LB[z[1]].toLowerCase();
+                })
+                .join("; ")
+            : ds + ": nothing marked.";
+          renderCal();
+        };
+        g.appendChild(b);
+      })(d);
+  }
+  $("pm").onclick = function () {
+    cm.setMonth(cm.getMonth() - 1);
+    renderCal();
+  };
+  $("nx").onclick = function () {
+    cm.setMonth(cm.getMonth() + 1);
+    renderCal();
+  };
+  function calc() {
+    var a = parseInt($("ca").value, 10),
+      t = parseInt($("ct").value, 10),
+      g = parseInt($("cg").value, 10),
+      r = parseInt($("cr").value, 10) || 0;
+    var bad = isNaN(a) || isNaN(t) || isNaN(g) || a < 0 || a > t || g < 1 || g > 99;
+    $("cres").textContent = bad
+      ? "Enter valid numbers. Attended can’t exceed held, and the target must be 1–99."
+      : "Now at " + pct(a, t).toFixed(1) + "%. " + advice(a, t, g);
+    var p = bad ? "" : plan(a, t, r, g);
+    $("cplan").textContent = p;
+    $("cplan").hidden = !p;
+  }
+  ["ca", "ct", "cg", "cr"].forEach(function (i) {
+    $(i).oninput = calc;
+  });
+  /* ---------- forms ---------- */
+  var dc = $("dchips");
+  dc.innerHTML =
+    '<span class="meta" style="width:100%">Class days (optional, adds it to the daily list)</span>';
+  DN.forEach(function (n, i) {
+    var l = document.createElement("label");
+    l.className = "day";
+    l.innerHTML = '<input type="checkbox" value="' + i + '">' + n;
+    dc.appendChild(l);
+  });
+  $("date").onchange = function () {
+    renderToday();
+    dayNote();
+  };
+  $("dprev").onclick = function () {
+    shift(-1);
+  };
+  $("dnext").onclick = function () {
+    shift(1);
+  };
+  $("dtoday").onclick = function () {
+    $("date").value = today();
+    renderToday();
+    dayNote();
+  };
+  $("add").onclick = function () {
+    var n = $("n").value.trim(),
+      a = Math.max(0, parseInt($("a").value, 10) || 0),
+      t = Math.max(0, parseInt($("t").value, 10) || 0);
+    if (!n) {
+      $("n").focus();
+      toast("Enter a subject name");
+      return;
+    }
+    if (a > t) t = a;
+    var dys = Array.prototype.map.call(
+      document.querySelectorAll("#dchips input:checked"),
+      function (x) {
+        x.checked = false;
+        return +x.value;
+      },
+    );
+    S.subs.push({ n: n, a: a, t: t, rem: 0, days: dys, log: [] });
+    $("n").value = "";
+    $("a").value = 0;
+    $("t").value = 0;
+    save();
+    render();
+  };
+  $("min").onchange = function () {
+    var v = parseInt($("min").value, 10);
+    if (v >= 1 && v <= 99) {
+      S.min = v;
+      save();
+      render();
+    } else $("min").value = S.min;
+  };
+  $("od").onchange = function () {
+    S.od = $("od").checked;
+    save();
+    render();
+  };
+  $("reset").onclick = function () {
+    if (confirm("Delete every subject and all history for this account?")) {
+      S.subs = [];
+      S.tt = [];
+      save();
+      render();
+    }
+  };
+  function csv() {
+    var r = ["Subject,Date,Status"];
+    S.subs.forEach(function (s) {
+      s.log.forEach(function (x) {
+        r.push('"' + s.n.replace(/"/g, '""') + '",' + x.d + "," + LB[x.s]);
+      });
+    });
+    return r.join("\n");
+  }
+  function show(t) {
+    var io = $("io");
+    io.value = t;
+    io.focus();
+    io.select();
+    try {
+      navigator.clipboard.writeText(t).then(
+        function () {
+          toast("Copied to clipboard");
+        },
+        function () {},
+      );
+    } catch (e) {}
+  }
+  $("bcsv").onclick = function () {
+    show(csv());
+  };
+  $("bjson").onclick = function () {
+    show(JSON.stringify(S));
+  };
+  $("brest").onclick = function () {
+    try {
+      var o = JSON.parse($("io").value);
+      if (!o || !Array.isArray(o.subs)) throw 0;
+      if (confirm("Replace current data with this backup?")) {
+        S = {
+          min: o.min || 75,
+          od: o.od !== false,
+          subs: o.subs,
+          tt: Array.isArray(o.tt) ? o.tt : [],
+        };
+        save();
+        $("min").value = S.min;
+        $("od").checked = S.od;
+        render();
+        toast("Backup restored");
+      }
+    } catch (e) {
+      toast("That isn’t a valid backup");
+    }
+  };
+  /* ---------- boot ---------- */
+  function applyTheme(t) {
+    var r = document.documentElement;
+    if (t === "auto") r.removeAttribute("data-theme");
+    else r.setAttribute("data-theme", t);
+  }
+  var th = ls("rc.theme", "dark");
+  applyTheme(th);
+  $("theme").value = th;
+  $("theme").onchange = function () {
+    ss("rc.theme", this.value);
+    applyTheme(this.value);
+  };
+  $("spw").onchange = function () {
+    $("pw").type = this.checked ? "text" : "password";
+  };
+  $("n").onkeydown = function (e) {
+    if (e.key === "Enter") $("add").click();
+  };
+  $("sort").onchange = function () {
+    S.sort = this.value;
+    save();
+    render();
+  };
+  $("allp").onclick = function () {
+    var ds = $("date").value || today(),
+      n = 0;
+    dayItems(ds).forEach(function (x) {
+      var s = x.sb,
+        sl = x.sl;
+      var done = sl
+        ? !!entryFor(s, sl, ds)
+        : s.log.some(function (e) {
+            return e.d === ds;
+          });
+      if (!done) {
+        s.log.push(sl ? { d: ds, s: "p", t: sl.id } : { d: ds, s: "p" });
+        n++;
+      }
+    });
+    save();
+    render();
+    toast(n ? "Marked " + n + " present" : "Everything is already marked");
+  };
+  $("tadd").onclick = function () {
+    var sid = $("tsub").value,
+      day = +$("tday").value,
+      st = $("tst").value,
+      en = $("ten").value;
+    if (!sid) {
+      toast("Add a subject first");
+      return;
+    }
+    if (!st || !en || mins(en) <= mins(st)) {
+      toast("End time must be after start time");
+      return;
+    }
+    var clash = S.tt.filter(function (t) {
+      return t.day === day && mins(st) < mins(t.en) && mins(en) > mins(t.st);
+    })[0];
+    if (clash) {
+      var cs = subById(clash.sub);
+      toast("Overlaps " + (cs ? cs.n : "another class") + " " + clash.st + "–" + clash.en);
+      return;
+    }
+    S.tt.push({ id: uid(), sub: sid, day: day, st: st, en: en });
+    save();
+    render();
+    toast("Slot added");
+  };
+  $("tweeks").oninput = renderTT;
+  tick();
+  var lastMin = -1;
+  setInterval(function () {
+    tick();
+    var m = nowMin();
+    if (S && m !== lastMin) {
+      lastMin = m;
+      renderNow();
+      if (($("date").value || today()) === today()) renderToday();
+    }
+  }, 1000);
+  $("demo").onclick = function () {
+    var seed = 7;
+    function rnd() {
+      seed = (seed * 16807) % 2147483647;
+      return seed / 2147483647;
+    }
+    var D = [
+        ["Demo: Mathematics", [1, 3, 5], 0.88],
+        ["Demo: Python", [2, 4], 0.8],
+        ["Demo: Networks", [1, 2, 4], 0.62],
+        ["Demo: Statistics", [3, 5], 0.74],
+      ],
+      now = new Date();
+    now.setHours(12, 0, 0, 0);
+    D.forEach(function (x) {
+      var lg = [];
+      for (var i = 55; i >= 1; i--) {
+        var t = new Date(now);
+        t.setDate(now.getDate() - i);
+        if (x[1].indexOf(t.getDay()) < 0) continue;
+        var r = rnd();
+        lg.push({
+          d: t.getFullYear() + "-" + pad(t.getMonth() + 1) + "-" + pad(t.getDate()),
+          s: r < 0.04 ? "c" : r < 0.04 + x[2] * 0.96 ? "p" : "a",
+        });
+      }
+      S.subs.push({ n: x[0], a: 0, t: 0, rem: 0, days: x[1], log: lg });
+    });
+    save();
+    render();
+    toast("Demo subjects added");
+  };
+  $("delacc").onclick = function () {
+    if (confirm("Permanently delete this account and all its data?")) {
+      var e = U;
+      delete users[e];
+      ss("rc.users", users);
+      try {
+        localStorage.removeItem("rc.data." + e);
+      } catch (x) {}
+      leave();
+    }
+  };
+  var sess = ls("rc.session", null);
+  if (sess && users[sess]) enter(sess);
+  else {
+    $("auth").hidden = false;
+    setMode("in");
+  }
+})();
+</script>
+  </body>
+</html>
