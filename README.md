@@ -38,3 +38,10 @@ devices and this is not server-grade security. To make it multi-user, replace th
 to a backend (for example FastAPI + PostgreSQL).
 
 Change the product name in `app.js`: `var BRAND="Attender";`
+<img width="1917" height="837" alt="Screenshot 2026-10-20 180833" src="https://github.com/user-attachments/assets/99e94905-35d5-4c85-b27b-822c50bc6756" />
+<img width="1916" height="902" alt="Screenshot 2026-10-20 180858" src="https://github.com/user-attachments/assets/f92d68b8-9db2-49a3-854e-be3a7e6a2ad5" />
+<img width="1917" height="882" alt="Screenshot 2026-10-20 180916" src="https://github.com/user-attachments/assets/f9aa5010-a746-4dac-b9e3-1e818e460792" />
+<img width="1917" height="902" alt="Screenshot 2026-10-20 180940" src="https://github.com/user-attachments/assets/8fa6cae1-ea0b-4786-9dec-4c5089c2687c" />
+<img width="1917" height="895" alt="Screenshot 2026-10-20 181006" src="https://github.com/user-attachments/assets/b8391752-7264-44b7-973d-a0c454c8d53e" />
+<img width="1912" height="892" alt="Screenshot 2026-10-20 181033" src="https://github.com/user-attachments/assets/621552bb-72f9-4b3c-bf9c-998638b484c9" />
+<img width="1916" height="901" alt="Screenshot 2026-10-20 181053" src="https://github.com/user-attachments/assets/8ebd5e5e-a349-4973-81eb-65fbfca80f49" />
